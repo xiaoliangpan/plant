@@ -7,6 +7,7 @@ interface State<T> {
   list: T[];
   allIds: T[];
   byId: { [key: string]: T };
+  [key: string]: any;
 }
 
 const useLoadings = (size: number = 6) => {
@@ -56,13 +57,14 @@ export const usePlantCore = <T = any>(
   const fetch = attachTemp(
     (data) => {
       if (listDataLike(data)) {
-        const { total, list } = data;
+        const { total, list, ...rest} = data;
         if (list?.length > 0) {
           setState({
             total: total || list?.length,
             list,
             allIds: transformAllIds(list, dataKey),
             byId: transformById(list, dataKey),
+            ...rest,
           });
         }
       }
@@ -74,7 +76,7 @@ export const usePlantCore = <T = any>(
   const append = attachTemp(
     (data) => {
       if (listDataLike(data)) {
-        const { total, list } = data;
+        const { total, list, ...rest} = data;
         if (list.length > 0) {
           const cList = list.concat(state.list);
           setState({
@@ -82,6 +84,7 @@ export const usePlantCore = <T = any>(
             list: cList,
             allIds: transformAllIds(cList, dataKey),
             byId: transformById(cList, dataKey),
+            ...rest
           });
         }
       }
